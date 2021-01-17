@@ -17,8 +17,9 @@ BookFinder é um projeto ReactJS desenvolvido focando aperfeiçoar meus conhecim
 
 #### Conteúdos e ferramentas aprendidos durante o desenvolvimento do app:
 
-- REDUX (Aperfeiçoamento de técnicas)
-- REDUX-SAGA (Aperfeiçoamento de técnicas)
+- [ ] REDUX (Aperfeiçoamento de técnicas)
+- [ ] REDUX-SAGA (Aperfeiçoamento de técnicas)
+- [ ] Framer Motion
 
 # 💡 Ideia
 
