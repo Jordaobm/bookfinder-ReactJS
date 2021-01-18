@@ -1,15 +1,19 @@
 import React, { useCallback, useState } from 'react';
-import { Actions, AddFavorites, Apresentation, ApresentationImg, ApresentationText, Button, ButtonStart, CardActionFavoriteBook, CardBook, CardBookImg, CardBookInfo, CardBookResponse, CardFavoriteBook, CardImgFavoriteBook, CardInfoFavoriteBook, Container, ContainerContent, Content, DoASearch, Favorites, IconStar, LearnMore, Main, MYBooks, Search } from './styles';
+import { Actions, AddFavorites, Apresentation, ApresentationImg, ApresentationText, Button, ButtonStart, CardActionFavoriteBook, CardBook, CardBookImg, CardBookInfo, CardBookResponse, CardFavoriteBook, CardImgFavoriteBook, CardInfoFavoriteBook, Container, ContainerContent, Content, DoASearch, Favorites, IconStar, LearnMore, Main, MYBooks, PlaceHolderLoadingActions, PlaceHolderLoadingCard, PlaceHolderLoadingCardBookImg, PlaceHolderLoadingCardBookInfo, PlaceHolderLoadingLearnMore, Search } from './styles';
 import background from '../../assets/bg1.svg';
 import { FiArrowDownCircle, FiSearch } from 'react-icons/fi';
-import { AiOutlineStar } from 'react-icons/ai';
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import apiGoogle from '../../services/apiBook';
 import { ResponseAPIGoogleBooks, ResponseAPIGoogleBooksItem } from '../../dtos/Response';
 import { BsBook } from 'react-icons/bs';
+import { motion } from 'framer-motion';
+import Scroll from 'react-scroll';
 
 const Home: React.FC = () => {
 
     const [errApi, setErrApi] = useState(false);
+
+    const [loading, setLoading] = useState(false);
 
     const [favoritesBook, setFavoritesBook] = useState<ResponseAPIGoogleBooksItem[]>(() => {
         const localFavoriteBooks = localStorage.getItem('@BookFinder:favoritesBook');
@@ -28,30 +32,27 @@ const Home: React.FC = () => {
 
     const [data, setData] = useState<ResponseAPIGoogleBooks>({ items: [], totalItems: 0 });
 
-    const handleSubmit = useCallback((value: string, selectCategory: string) => {
+    const handleSubmit = useCallback(async (value: string, selectCategory: string) => {
         if (value === '') {
             setInputError(true)
         } else {
-
-
             if (selectCategory === 'titulo') {
-                apiGoogle.get<ResponseAPIGoogleBooks>(`intitle:${value}`).then((response => {
-                    setData(response.data);
-
-                })).catch(
-                    response => {
-                        setErrApi(true)
-                    }
-                )
+                setLoading(true)
+                const response = await apiGoogle.get<ResponseAPIGoogleBooks>(`intitle:${value}`)
+                setData(response.data)
+                if (response.data.totalItems === 0) {
+                    setErrApi(true)
+                }
+                setLoading(false)
             } else {
-                apiGoogle.get<ResponseAPIGoogleBooks>(`inauthor:${value}`).then((response) => {
-                    setData(response.data)
+                setLoading(true)
+                const response = await apiGoogle.get<ResponseAPIGoogleBooks>(`inauthor:${value}`)
+                setData(response.data)
+                if (response.data.totalItems === 0) {
+                    setErrApi(true)
+                }
+                setLoading(false)
 
-                }).catch(
-                    response => {
-                        setErrApi(true)
-                    }
-                )
             }
         }
     }, [])
@@ -79,24 +80,42 @@ const Home: React.FC = () => {
 
     localStorage.setItem('@BookFinder:favoritesBook', JSON.stringify(favoritesBook));
 
+    const variants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    }
+
+    const onTap = useCallback((event, info) => {
+        const scroll = Scroll.animateScroll;
+        scroll.scrollTo(600);
+    }, [])
+
+
+
     return (
         <>
-            <Container>
-                <Content>
-                    <Apresentation>
-                        <ApresentationText>
-                            <h1>BookFinder</h1>
-                            <ButtonStart>
-                                <FiArrowDownCircle size={25} />
-                                <p>Start</p>
-                            </ButtonStart>
-                        </ApresentationText>
-                        <ApresentationImg>
-                            <img src={background} alt="Estante de Livros" />
-                        </ApresentationImg>
-                    </Apresentation>
-                </Content>
-            </Container>
+            <motion.div whileHover={{ transition: { duration: 1 } }} initial="hidden" animate="visible" variants={variants}>
+                <Container>
+                    <Content>
+                        <Apresentation>
+                            <ApresentationText>
+
+                                <h1>BookFinder</h1>
+
+                                <ButtonStart>
+                                    <motion.div onTap={onTap} whileTap={{ scale: 0.8 }}>
+                                        <FiArrowDownCircle size={25} />
+                                        <p>Start</p>
+                                    </motion.div>
+                                </ButtonStart>
+                            </ApresentationText>
+                            <ApresentationImg>
+                                <img src={background} alt="Estante de Livros" />
+                            </ApresentationImg>
+                        </Apresentation>
+                    </Content>
+                </Container>
+            </motion.div>
             <Main>
                 <Content>
                     <ContainerContent>
@@ -111,39 +130,69 @@ const Home: React.FC = () => {
                                 <button type='button' onClick={() => handleSubmit(value, selectCategory)}> <FiSearch /> <p>Pesquisar</p></button>
                             </Button>
                             <CardBookResponse>
-                                {data.items !== undefined && data.items.length > 0 ? data?.items.map((item) => {
+                                {loading ?
+                                    <PlaceHolderLoadingCard
+                                        initial={{ opacity: 1 }}
+                                        animate={{
+                                            scale: [1, 1, 1],
+                                            backgroundColor: ["#D9D9D9", "#F2F2F2", "#D9D9D9"],
+                                        }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                    >
 
-                                    const searchFavoriteBooksInData = favoritesBook.find(favorite => favorite.id === item.id);
+                                        <PlaceHolderLoadingCardBookImg>
+                                            <BsBook size={70} />
+                                        </PlaceHolderLoadingCardBookImg>
+                                        <PlaceHolderLoadingCardBookInfo>
+                                            <h1></h1>
+                                            <h2></h2>
+                                            <h3></h3>
+                                        </PlaceHolderLoadingCardBookInfo>
+                                        <PlaceHolderLoadingActions>
+                                            <AddFavorites>
+                                                <AiFillStar size={20} color='#ABABAB' style={{ marginRight: '10px' }} />
 
 
+                                                <div style={{ backgroundColor: '#ABABAB', width: '76px', height: '15px' }}></div>
+                                            </AddFavorites>
+                                            <PlaceHolderLoadingLearnMore>
 
-                                    return (
-                                        <CardBook key={item.id}>
-                                            {item.volumeInfo.imageLinks ? <CardBookImg>
-                                                <img src={item.volumeInfo.imageLinks.thumbnail} alt="Livro" />
-                                            </CardBookImg> : <CardBookImg>
-                                                    <BsBook size={70} />
-                                                </CardBookImg>}
-                                            <CardBookInfo>
-                                                <h1>{item.volumeInfo.title}</h1>
-                                                {item.volumeInfo.authors === undefined ? <p></p> : item.volumeInfo.authors.map((author) => (<p>{author}</p>))}
-                                                {item.volumeInfo.categories === undefined ? <p></p> : <p>{item.volumeInfo.categories.map((category) => (category))}</p>}
-                                            </CardBookInfo>
-                                            <Actions>
-                                                <AddFavorites>
-                                                    <IconStar isFavorite={!!searchFavoriteBooksInData}>
-                                                        <AiOutlineStar size={20} onClick={() => handleAddAndRemoveFavorites(item)} />
-                                                    </IconStar>
-                                                    <p>Favoritos</p>
-                                                </AddFavorites>
-                                                <LearnMore>
-                                                    <a target="blank" href={item.volumeInfo.previewLink}>lean more</a>
-                                                </LearnMore>
-                                            </Actions>
-                                        </CardBook>
+                                            </PlaceHolderLoadingLearnMore>
+                                        </PlaceHolderLoadingActions>
 
-                                    )
-                                }) : <DoASearch errApi={errApi}>{errApi ? <p>Nenhum dado foi encontrado. Tente novamente</p> : <p>Faça uma busca</p>}</DoASearch>}
+                                    </PlaceHolderLoadingCard>
+
+                                    : data.items !== undefined && data.items.length > 0 ? data?.items.map((item) => {
+                                        const searchFavoriteBooksInData = favoritesBook.find(favorite => favorite.id === item.id);
+                                        return (
+
+                                            <CardBook initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} key={item.id}>
+                                                {item.volumeInfo.imageLinks ? <CardBookImg>
+                                                    <img src={item.volumeInfo.imageLinks.thumbnail} alt="Livro" />
+                                                </CardBookImg> : <CardBookImg>
+                                                        <BsBook size={70} />
+                                                    </CardBookImg>}
+                                                <CardBookInfo>
+                                                    <h1>{item.volumeInfo.title}</h1>
+                                                    {item.volumeInfo.authors === undefined ? <p></p> : item.volumeInfo.authors.map((author) => (<p>{author}</p>))}
+                                                    {item.volumeInfo.categories === undefined ? <p></p> : <p>{item.volumeInfo.categories.map((category) => (category))}</p>}
+                                                </CardBookInfo>
+                                                <Actions>
+                                                    <AddFavorites>
+                                                        <IconStar isFavorite={!!searchFavoriteBooksInData}>
+                                                            <AiOutlineStar size={20} onClick={() => handleAddAndRemoveFavorites(item)} />
+                                                        </IconStar>
+                                                        <p>Favoritos</p>
+                                                    </AddFavorites>
+                                                    <LearnMore>
+                                                        <a target="blank" href={item.volumeInfo.previewLink}>lean more</a>
+                                                    </LearnMore>
+                                                </Actions>
+                                            </CardBook>
+
+                                        )
+                                    }) : <DoASearch errApi={errApi}>{errApi ? <p>Nenhum dado foi encontrado. Tente novamente</p> : <p>Faça uma busca</p>}</DoASearch>}
+
 
 
                             </CardBookResponse>
@@ -154,7 +203,7 @@ const Home: React.FC = () => {
                                 <h1>Meus Livros Favoritos</h1>
                             </MYBooks>
                             {favoritesBook.map((item) => (
-                                <CardFavoriteBook>
+                                <CardFavoriteBook initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} key={item.id}>
                                     {item.volumeInfo.imageLinks ? <CardImgFavoriteBook>
                                         <img src={item.volumeInfo.imageLinks?.thumbnail} alt="Livro" />
                                     </CardImgFavoriteBook> : <CardImgFavoriteBook>

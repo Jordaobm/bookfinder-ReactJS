@@ -1,4 +1,6 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
+
 
 export const Container = styled.div`
     height:100vh;
@@ -61,44 +63,48 @@ export const ApresentationImg = styled.div`
     }
 `;
 
-export const ButtonStart = styled.button`
-    margin-top:20px;
+export const ButtonStart = styled.div`
+    div {
+        margin-top:20px;
+        cursor:pointer;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+        display:flex;
+        justify-content:center;
+        align-items:center;
 
-    width:250px;
-    height:50px;
-    border:none;
-    border-radius:5px;
-    background-color:#E86A50;
-    border:2px solid black;
-    transition:0.5s;
+        width:250px;
+        height:50px;
+        border:none;
+        border-radius:5px;
+        background-color:#E86A50;
+        transition:0.5s;
 
-    svg {
-        color:white;
-    }
+        svg {
+            color:white;
+        }
 
-    p {
-        font-size:22px;
-        color:white;
-        font-weight:600;
-        margin-left:15px;
-    }
+        p {
+            font-size:22px;
+            color:white;
+            font-weight:600;
+            margin-left:15px;
+        }
 
-    :hover{
-        background-color:#6392EF;
-    }
-    :focus {
-        background-color:#3358A3;
-    }
+        :hover{
+            background-color:#6392EF;
+        }
+        :focus {
+            background-color:#3358A3;
+        }
+        }
+    
 `;
 
 export const Main = styled.div`
     width:100%;
     /* background-color:#6392EF; */
     padding:0 2%;
+    min-height:600px;
 
     @media(max-width:1150px){
         max-width:700px;
@@ -266,7 +272,7 @@ export const CardBookResponse = styled.div`
     justify-content:center;
 `;
 
-export const CardBook = styled.div`
+export const CardBook = styled(motion.div)`
     width:100%;
     display:flex;
     align-items:center;
@@ -403,7 +409,7 @@ export const MYBooks = styled.div`
     
 `;
 
-export const CardFavoriteBook = styled.div`
+export const CardFavoriteBook = styled(motion.div)`
     width:100%;
     display:flex;
     justify-content:center;
@@ -484,3 +490,95 @@ export const DoASearch = styled.div<DoASearchProps>`
     }
 `;
 
+// PLACEHOLDER DE LOADING
+
+export const PlaceHolderLoadingCard = styled(motion.div)`
+    width:100%;
+    display:flex;
+    align-items:center;
+    background-color:white;
+    border:2px solid #ABABAB;
+    border-radius:5px;
+    padding:20px;
+    margin:10px 0;
+
+    @media (max-width:480px){
+        flex-direction:column;
+    }
+`;
+
+export const PlaceHolderLoadingCardBookImg = styled.div`
+    width:20%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    img {
+        width:80px;
+    }
+    svg {
+        color:#ABABAB;
+    }
+
+    @media (max-width:480px){
+        width:100%;
+        img {
+            width:50%;
+        }
+    }
+`;
+
+export const PlaceHolderLoadingCardBookInfo = styled.div`
+    width:60%;
+    padding:10px;
+    color:#ABABAB;
+
+    h1 {
+        margin: 5px;
+        background-color: #ABABAB;
+        font-size: 19px;
+        font-weight: 700;
+        width: 225px;
+        height: 18px;
+    }
+
+    h2 {
+        margin: 5px;
+        background-color: #ABABAB;
+        width: 151px;
+        height: 18px;
+    }
+
+    h3 {
+        margin: 5px;
+        background-color: #ABABAB;
+        width: 200px;
+        height: 18px;
+    }
+
+    @media (max-width:480px){
+        width:100%;
+
+    }
+
+`;
+
+export const PlaceHolderLoadingActions = styled.div`
+    width:20%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    @media (max-width:480px){
+        width:100%;
+    }
+`;
+
+export const PlaceHolderLoadingLearnMore = styled.div`
+    width:100%;
+    height: 48px;
+    border: none;
+    background-color: #ABABAB;
+    border-radius: 5px;
+    transition:0.5s;
+`;
