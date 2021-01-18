@@ -38,4 +38,4 @@ A ideia do BookFinder é ser simples. Listar, adicionar e remover livros de uma 
 - [x]  Implementar um design responsivo
 - [x]  Adicionar animações de carregamento
 
-#### Link do app no site da Vercel: 
+#### Link do app no site da Vercel: https://bookfinder-react-js.vercel.app/
