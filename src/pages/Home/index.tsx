@@ -144,9 +144,9 @@ const Home: React.FC = () => {
                                             <BsBook size={70} />
                                         </PlaceHolderLoadingCardBookImg>
                                         <PlaceHolderLoadingCardBookInfo>
-                                            <h1></h1>
-                                            <h2></h2>
-                                            <h3></h3>
+                                            <h1> </h1>
+                                            <h2> </h2>
+                                            <h3> </h3>
                                         </PlaceHolderLoadingCardBookInfo>
                                         <PlaceHolderLoadingActions>
                                             <AddFavorites>
